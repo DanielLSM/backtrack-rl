@@ -54,19 +54,23 @@ class CSP:
         self.vars = vars
         self.constraints = constraints  #maps vars to constraints
 
+    def change_domain(self, assignment, var):
+        domain = assignment.get_domain(var)
+        assert len(domain) != 0
+        return domain
+
     def satisfied_assignment(self, assignment):
         assert len(self.vars) == len(assignment), "variables mismatch"
-
         for constraint in self.constraints:
             if not constraint.satisfied():
                 return False
-
         return True
 
     def consistent_assignment(self, assignment, var):
-
-        for constrain in self.constraints:
-            pass
+        for constraint in self.constraints:
+            if not constraint.consistent_assignment:
+                return False
+        return True
 
 
 class CSPCalendar(CSP):
