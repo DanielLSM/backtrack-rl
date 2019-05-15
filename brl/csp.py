@@ -8,6 +8,9 @@ class Constraint:
     def consistent(self, assignment):
         raise NotImplementedError
 
+    def relies_on(self):
+        raise NotImplementedError
+
 
 class Variable:
     def __init__(self, domain, info, *args, **kwargs):
@@ -53,6 +56,15 @@ class CSP:
     def __init__(self, vars, constraints, *args, **kwargs):
         self.vars = vars
         self.constraints = constraints  #maps vars to constraints
+        self.vars_constraints = {var: [] for var in self.vars}
+
+    def variable_constraints(self, variable):
+        assert self.vars_constraints[variable] == 0
+
+        for constraint in self.constraints:
+            constraint_vars = constraint.relies_on()
+            if variable in constraint_vars:
+                self.vars_constraints[variable].add(constraint)
 
     def change_domain(self, assignment, var):
         domain = assignment.get_domain(var)
