@@ -1,13 +1,21 @@
 class Constraint:
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, info, *args, **kwargs):
+        self._info = info
+
+    def satisfied(self, assignment):
+        raise NotImplementedError
+
+    def consistent(self, assignment):
+        raise NotImplementedError
 
 
 class Variable:
-    def __init__(self, name, domain, *args, **kwargs):
-        self.name = name
+    def __init__(self, domain, info, *args, **kwargs):
         self.domain = domain
-        self.info = args
+        self._info = info
+
+    def get_info(self):
+        return self._info
 
 
 class Assignment:
@@ -18,15 +26,19 @@ class Assignment:
 
     def assign(self, var, value):
         self.assignment[var] = value
+        self.vars_domain[var] = value
 
-    def getValue(self, var):
+    def get_value(self, var):
         return self.assignment[var]
 
-    def getDomain(self, var):
+    def get_domain(self, var):
         return self.vars_domain[var]
 
-    def restrictDomain(self, var, dom):
+    def restrict_domain(self, var, dom):
         self.vars_domain[var] = dom
+
+    def __len__(self):
+        return len(list(self.assignment.keys()))
 
 
 class Schedule(Assignment):
@@ -34,14 +46,27 @@ class Schedule(Assignment):
         super().__init__(self, vars, *args)
 
     def render(self):
-        pass
+        raise NotImplementedError
 
 
 class CSP:
-    def __init__(self, vars, domains, constraints, *args, **kwargs):
+    def __init__(self, vars, constraints, *args, **kwargs):
         self.vars = vars
         self.constraints = constraints  #maps vars to constraints
-        self.domains = domains  #maps vars to domains
+
+    def satisfied_assignment(self, assignment):
+        assert len(self.vars) == len(assignment), "variables mismatch"
+
+        for constraint in self.constraints:
+            if not constraint.satisfied():
+                return False
+
+        return True
+
+    def consistent_assignment(self, assignment, var):
+
+        for constrain in self.constraints:
+            pass
 
 
 class CSPCalendar(CSP):
