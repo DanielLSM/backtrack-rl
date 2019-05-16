@@ -85,7 +85,7 @@ class CSP:
         return True
 
 
-class CSPCalendar(CSP):
+class CSPSchedule(CSP):
     def __init__(self, vars, domains, constraints, *args, **kwargs):
         super().__init__(self, vars, domains, constraints)
 
