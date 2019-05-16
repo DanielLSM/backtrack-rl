@@ -116,11 +116,11 @@ class CSPSchedule(CSP):
         value = 0
         return value
 
-    def select_next_var(self, assignment):
-        return self.variable_ordering_heuristic(assignment)
+    def select_next_var(self, schedule_assign):
+        return self.variable_ordering_heuristic(schedule_assign)
 
-    def select_next_value(self, assignment, var):
-        return self.value_ordering_heuristic(assignment, var)
+    def select_next_value(self, schedule_assign, var):
+        return self.value_ordering_heuristic(schedule_assign, var)
 
 
 if __name__ == "__main__":

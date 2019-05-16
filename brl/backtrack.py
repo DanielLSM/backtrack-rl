@@ -8,14 +8,14 @@ class BacktrackSchedule:
         self.csp = csp
         self.start_assign = start_assign
 
-    def solve(self, assign):
-        if self.csp.satisfied_assignment(assign):
-            return assign
+    def solve(self, schedule_assign):
+        if self.csp.satisfied_assignment(schedule_assign):
+            return schedule_assign
 
-        var = self.csp.select_next_var(assign)
+        var = self.csp.select_next_var(schedule_assign)
         if not var: return None
 
-        value = self.csp.select_next_value(assign, var)
+        value = self.csp.select_next_value(schedule_assign, var)
 
 
 if __name__ == "__main__":
