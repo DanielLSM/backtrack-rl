@@ -16,6 +16,7 @@ class NodeSchedule(treelib.Node):
         self.action_var = action_var
         self.action_value = action_value
         self.tag = "{}={}".format(action_var, action_value)
+        self.count = 0
         #parent is passed on *args
 
     def __repr__(self):
@@ -26,6 +27,12 @@ class NodeSchedule(treelib.Node):
         return [
             self.child_node(csp, assignment, action_var, action_value)
             for action_value in assignment.vars_domain[action_var]
+        ]
+
+    def expand_with_heuristic(self, csp, assignment, action_var):
+        return [
+            self.child_node(csp, assignment, action_var, action_value)
+            for action_value in csp.select_next_value(assignment, action_var)
         ]
 
     def child_node(self, csp, assignment, action_var, action_value):

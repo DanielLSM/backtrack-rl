@@ -27,13 +27,13 @@ class Variable:
 class Assignment:
     def __init__(self, vars, *args, **kwargs):
         self.vars = vars
-        self.assigned = []
+        self.unassigned_vars = vars
         self.assignment = dict.fromkeys(vars)
         self.vars_domain = {var: var.domain for var in vars}
 
     def assign(self, var, value):
-        assert var not in self.assigned, "var already assigned"
-        self.assigned.append(var)
+        assert var in self.unassigned_vars, "var already assigned"
+        self.unassigned_vars.remove(var)  #pop
         self.assignment[var] = value
         self.vars_domain[var] = value
 
@@ -51,14 +51,24 @@ class Assignment:
 
 
 class Schedule(Assignment):
-    def __init__(self, vars, *args, **kwargs):
+    def __init__(self, vars, due_dates, *args, **kwargs):
         super().__init__(self, vars, *args)
+        self.due_dates = due_dates
+        self.ordered_vars = self.order_var_earliest_due_date()
+        self.ordered_domain = self.order_domain_due_date()
 
+    def assign(self, var, value):
+        super().assign(var, value)
+        self.ordered_vars.pop()
+
+    #TODO lets do the processing here
     def order_var_earliest_due_date(self):
-        pass
+        ordered_vars = self.vars
+        return ordered_vars
 
+    #TODO this is naturally done when building the domain
     def order_domain_due_date(self):
-        pass
+        return self.vars_domain
 
     def render(self):
         raise NotImplementedError
@@ -111,15 +121,18 @@ class CSPSchedule(CSP):
 
     def do_next_assignment(self, assignment, variable, value):
         assignment.assign(variable, value)
-        self.arc_consistency(assignment, value)
-        next_assignment = assignment
+        next_assignment = self.arc_consistency(assignment, value)
         return next_assignment
+
+    def arc_consistency(self, assignment, value):
+        for var in assignment.unassigned:
+            assignment.vars_domain[var].remove(value)
+        return assignment
 
     #order by shortest due_date
     #it helps if variables are ordered already
     def variable_ordering_heuristic(self, schedule_assign):
-        var = 0
-        return var
+        return schedule_assign.unassigned[-1]
 
     #order by value closest to due_date
     #it helps if domains are ordered already
