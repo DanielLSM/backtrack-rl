@@ -18,6 +18,11 @@ class BacktrackSchedule:
         value = self.csp.select_next_value(schedule_assign, var)
 
 
+class BacktrackTreeDFS:
+    def __init__(self):
+        pass
+
+
 if __name__ == "__main__":
     csp = CSPSchedule
     print("put sad wings around me now")
