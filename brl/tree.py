@@ -16,6 +16,7 @@ class Node:
     def __repr__(self):
         return "Node {}={}".format(self.action_var, self.action_value)
 
+    # we need to fix domain here
     def expand_no_heuristic(self, csp, assignment, action_var):
         return [
             self.child_node(csp, assignment, action_var, action_value)
