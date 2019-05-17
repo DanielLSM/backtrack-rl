@@ -1,5 +1,6 @@
 from brl.csp import CSPSchedule, Variable, Constraint, Schedule
-from brl.tree import Node
+# from brl.tree import Node, Tree
+from treelib import Tree
 
 
 class BacktrackSchedule:
@@ -43,14 +44,58 @@ class BacktrackTreeDFS:
 
             return next_node
 
-        var = self.csp.select_next_var(schedule_assign)
+        var = self.csp.select_next_var(node_schedule.assignment)
         if not var: return None
 
-        value = self.csp.select_next_value(schedule_assign, var)
+        value = self.csp.select_next_value(node_schedule.assignment, var)
+
+
+class BacktrackTreelib:
+    def __init__(self, csp, start_assign, *args, **kwargs):
+        assert isinstance(csp, CSPSchedule), "problem is not CSP"
+        assert isinstance(start_assign, Schedule), "assignment is not valid"
+        self.csp = csp
+        # self.start_assign = start_assign
+        self.tree = Tree()
+        self.root = self.tree("Root", "root", data={})
+
+    def solve(self, assignment, parent=None):
+        if self.csp.satisfied_assignment(assignment):
+            return assignment
+
+        next_var = self.csp.select_next_var(assignment)
+        if next_var == None:
+            return None
+
+        # here when we expand the childs, we need to fix domain
+        # for child in node_schedule.expand_no_heuristic(
+        #         self.csp, node_schedule.assignment, next_var):
+        #     next_node = self.solve(assignment, parent=child)
+
+        #     return next_node
+
+        # var = self.csp.select_next_var(schedule_assign)
+        # if not var: return None
+
+        # value = self.csp.select_next_value(schedule_assign, var)
+
+
+import treelib
+
+
+class NodeX(treelib.Node):
+    def __init__(self, assignment, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.assignment = assignment
 
 
 if __name__ == "__main__":
-    csp = CSPSchedule
-    print("put sad wings around me now")
+    # csp = CSPSchedule
+    # print("put sad wings around me now")
 
     # bb = BacktrackSchedule()
+    from treelib import Node, Tree
+    tree = Tree()
+    root = tree.create_node(1, 1, data={})
+    node = NodeX("lul", 2, 2)
+    tree.add_node(node, root)

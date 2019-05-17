@@ -27,10 +27,13 @@ class Variable:
 class Assignment:
     def __init__(self, vars, *args, **kwargs):
         self.vars = vars
+        self.assigned = []
         self.assignment = dict.fromkeys(vars)
         self.vars_domain = {var: var.domain for var in vars}
 
     def assign(self, var, value):
+        assert var not in self.assigned, "var already assigned"
+        self.assigned.append(var)
         self.assignment[var] = value
         self.vars_domain[var] = value
 
@@ -66,10 +69,6 @@ class CSP:
         self.vars = vars
         self.constraints = constraints  #maps vars to constraints
         self.vars_constraints = {var: [] for var in self.vars}
-
-    def do_next_assignment(self, assignment, variable, value):
-        next_assignment = assignment
-        return next_assignment
 
     #we can make an yield on this one
     def select_next_var(self, assignment):
@@ -109,6 +108,12 @@ class CSP:
 class CSPSchedule(CSP):
     def __init__(self, vars, domains, constraints, *args, **kwargs):
         super().__init__(self, vars, domains, constraints)
+
+    def do_next_assignment(self, assignment, variable, value):
+        assignment.assign(variable, value)
+        self.arc_consistency(assignment, value)
+        next_assignment = assignment
+        return next_assignment
 
     #order by shortest due_date
     #it helps if variables are ordered already
