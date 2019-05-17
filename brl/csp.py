@@ -67,9 +67,15 @@ class CSP:
         self.constraints = constraints  #maps vars to constraints
         self.vars_constraints = {var: [] for var in self.vars}
 
+    def do_next_assignment(self, assignment, variable, value):
+        next_assignment = assignment
+        return next_assignment
+
+    #we can make an yield on this one
     def select_next_var(self, assignment):
         return random.choice(assignment.vars)
 
+    #we can make an yield on this one
     def select_next_value(self, assignment, var):
         return random.choice(assignment.vars_domain[var])
 
